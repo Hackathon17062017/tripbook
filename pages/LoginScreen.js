@@ -7,10 +7,7 @@ import {
   Dimensions
 } from 'react-native';
 
-import * as firebase from 'firebase';
-import config from '../../configs/firebase';
-
-const firebaseApp = firebase.initializeApp(config);
+import firebaseApp from '../../configs/firebase'
 
 import {FBLogin, FBLoginManager} from 'react-native-facebook-login'
 
