@@ -4,6 +4,7 @@ import {
   Text,
   StyleSheet
 } from 'react-native';
+import LoginScreen from '../pages/Login/LoginScreen'
 
 export default class TripBook extends Component {
   constructor(props) {
@@ -15,7 +16,7 @@ export default class TripBook extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text>CodeSharing App</Text>
+        <LoginScreen/>
       </View>
     )
   }
