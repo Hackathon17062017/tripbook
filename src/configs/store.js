@@ -1,6 +1,7 @@
 import { observable, action, computed } from 'mobx';
 import { LayoutAnimation, Animated, Dimensions, PanResponder } from 'react-native';
 import data from './data';
+import {firebaseApp, database, server} from '../configs/firebase';
 
 const { width, height } = Dimensions.get('window');
 const VERTICAL_THRESHOLD = 80;
@@ -11,7 +12,7 @@ class Store {
 	@observable carouselOpen = false;
 	@observable offset = { top: height/2, left: width/2 };
 
-	@observable stories = data;
+	@observable stories = [];
 	@observable deckIdx = 0;
 	@observable paused = false;
 	@observable backOpacity = 0;
@@ -26,6 +27,12 @@ class Store {
 
 	constructor() {
 		this.initPanResponder();
+	}
+
+	@action fetchStories(userRef) {
+		database.ref('/stories').once('value', (snapshot) => {
+			this.stories = snapshot.val();
+		})
 	}
 
 	@action initPanResponder() {
@@ -76,10 +83,10 @@ class Store {
 				if (dx > HORIZONTAL_THRESHOLD) { // previous deck
 					if (deckIdx == 0)
 						return this.leaveStories();
-					
+
 					return this.animateDeck(width * (deckIdx - 1), true);
 				}
-				
+
 				if (dx < -HORIZONTAL_THRESHOLD) { // -> next deck
 					if (deckIdx == this.stories.length - 1)
 						return this.leaveStories();
@@ -246,7 +253,6 @@ class Store {
 		if (this.stories.length <= 0) return null;
 		return this.stories[this.deckIdx];
 	}
-
 }
 
 export default new Store();

@@ -72,7 +72,9 @@ export default class extends React.Component {
 				onPressIn={() => store.setBackOpacity(1)}
 				onLongPress={() => store.setBackOpacity(0)}
 			>
-				<Text>LOL</Text>
+				<View>
+					<Text>LOL</Text>
+				</View>
 			</TouchableWithoutFeedback>
 		);
 	}

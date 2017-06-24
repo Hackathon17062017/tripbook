@@ -3,12 +3,18 @@ import { StyleSheet, View, Dimensions, Animated, StatusBar } from 'react-native'
 import { observer } from 'mobx-react/native';
 import Story from './story';
 import store from '../configs/store';
+import {database} from '../configs/firebase';
+import {addStory} from '../helpers/firebase';
 
 const { width, height } = Dimensions.get('window');
 
 
 @observer
 export default class extends React.Component {
+	constructor(props) {
+		super(props);
+	}
+
 	componentDidMount() {
 		StatusBar.setHidden(true);
 	}
@@ -16,7 +22,7 @@ export default class extends React.Component {
 	render() {
 		return (
 			<View style={styles.container} {...store.panResponder.panHandlers}>
-				{store.stories.map((story, idx) => {
+				{this.props.stories.map((story, idx) => {
 					let scale = store.verticalSwipe.interpolate({
 						inputRange: [-1, 0, height],
 						outputRange: [1, 1, 0.75]

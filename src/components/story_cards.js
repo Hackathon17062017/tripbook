@@ -1,8 +1,11 @@
 import React from 'react';
-import { StyleSheet, ScrollView, View, Image, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, ScrollView, View, Image, TouchableWithoutFeedback, Dimensions,
+Text } from 'react-native';
 import store from '../configs/store';
 
-export default class Bubbles extends React.Component {
+const {width, height} = require('Dimensions').get('window');
+
+export default class StoryCards extends React.Component {
 	constructor(props){
 		super(props);
 	}
@@ -12,9 +15,9 @@ export default class Bubbles extends React.Component {
 			<View style={styles.container}>
 				<View ref='foo'>
 					<ScrollView
-						style={styles.bubbles}
-						contentContainerStyle={{ alignItems: 'center' }}
-						horizontal={true}
+						// style={styles.bubbles}
+						contentContainerStyle={styles.list}
+						// horizontal={true}
 						showsHorizontalScrollIndicator={false}
 					>
 						{this.props.stories.map((story, i) => (
@@ -32,7 +35,11 @@ export default class Bubbles extends React.Component {
 										});
 									}}
 								>
-									<Image style={styles.img} source={{ uri: story.avatar }} />
+									<View>
+										<Image style={styles.img} source={{ uri: story.avatar }} />
+										<Text>{story.title}</Text>
+									</View>
+
 								</TouchableWithoutFeedback>
 							</View>
 						))}
@@ -48,25 +55,35 @@ const bubbleSize = 70;
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: '#fff',
-		justifyContent: 'center',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center'
+	},
+	list: {
+		flexDirection: 'column',
+    flexWrap: 'wrap'
 	},
 	bubbles: {
-		height: 90,
-		flexDirection: 'row',
+		height: 500,
 		paddingHorizontal: 5,
 		backgroundColor: '#f3f3f3',
 		borderTopWidth: StyleSheet.hairlineWidth,
 		borderBottomWidth: StyleSheet.hairlineWidth,
 		borderColor: '#ccc',
 		overflow: 'visible',
+		// width: width,
 	},
 	img: {
 		borderWidth: 2,
 		borderColor: '#fff',
-		width: bubbleSize,
-		height: bubbleSize,
-		borderRadius: bubbleSize/2,
-		marginHorizontal: 6,
+		// width: bubbleSize,
+		// height: bubbleSize,
+		// borderRadius: bubbleSize/2,
+		width: width/2 - 30,
+		height: height/3-20,
+		marginHorizontal: 10,
+		margin: 10,
+    // width: 500,
+    // height: 500,
 	},
 });
