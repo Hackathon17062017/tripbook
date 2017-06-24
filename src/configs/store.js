@@ -1,6 +1,7 @@
 import { observable, action, computed } from 'mobx';
 import { LayoutAnimation, Animated, Dimensions, PanResponder } from 'react-native';
 import data from './data';
+import {firebaseApp, database, server} from '../configs/firebase';
 
 const { width, height } = Dimensions.get('window');
 const VERTICAL_THRESHOLD = 80;
@@ -11,7 +12,7 @@ class Store {
 	@observable carouselOpen = false;
 	@observable offset = { top: height/2, left: width/2 };
 
-	@observable stories = data;
+	@observable stories = [];
 	@observable deckIdx = 0;
 	@observable paused = false;
 	@observable backOpacity = 0;
@@ -23,9 +24,51 @@ class Store {
 	@observable swipedHorizontally = true;
 	@observable panResponder = null;
 
+	@observable isLoadingStories = false;
 
 	constructor() {
 		this.initPanResponder();
+	}
+
+	@action fetchMoments(momentsRef){
+		this.isLoadingMoments = true;
+		momentsRef.once('value', snaps => {
+			let items = []
+			snaps.forEach(snap => {
+				let moment = snap.val();
+				items.push({
+					src: moment.photo_url,
+					type: 'img',
+					timestamp: moment.timestamp,
+					place: moment.place
+				})
+			});
+			this.currentStory.items = items;
+			this.isLoadingMoments = false;
+		})
+	}
+
+	@action fetchStories() {
+		this.isLoadingStories = true;
+		database.ref('/stories').once('value', snaps => {
+			let newStories = [];
+			snaps.forEach(child => {
+				let story = child.val();
+				newStories.push({
+					idx: 0,
+					avatar: story.user.avatar_url,
+					items: [{
+						src: story.featured_moment.photo_url,
+						type: 'img'
+					}],
+					title: story.title,
+					user: story.user,
+					id: child.key
+				});
+			});
+			this.stories = newStories;
+			this.isLoadingStories = false;
+		})
 	}
 
 	@action initPanResponder() {
@@ -76,10 +119,10 @@ class Store {
 				if (dx > HORIZONTAL_THRESHOLD) { // previous deck
 					if (deckIdx == 0)
 						return this.leaveStories();
-					
+
 					return this.animateDeck(width * (deckIdx - 1), true);
 				}
-				
+
 				if (dx < -HORIZONTAL_THRESHOLD) { // -> next deck
 					if (deckIdx == this.stories.length - 1)
 						return this.leaveStories();
@@ -98,7 +141,8 @@ class Store {
 	// Toggle Carousel
 	///////////////////////////////////
 
-	@action openCarousel = (idx, offset) => {
+	@action openCarousel = (idx, offset, story) => {
+		// this.fetchMoments(database.ref('/moments/'+story.key))
 		this.offset = offset;
 		this.setDeckIdx(idx);
 		this.horizontalSwipe.setValue(idx * width);
@@ -169,7 +213,7 @@ class Store {
 		requestAnimationFrame(() => {
 			Animated.timing(this.indicatorAnim, {
 				toValue: 1,
-				duration: 5000 * (1-this.indicatorAnim._value),
+				duration: 1000000 * (1-this.indicatorAnim._value),
 			}).start(({ finished }) => {
 				if (finished) this.onNextItem();
 			});
@@ -190,9 +234,10 @@ class Store {
 		if (this.paused) return this.play();
 
 		const story = this.currentStory;
+		console.error(this.currentStory.items);
 
 		if (story.idx >= story.items.length - 1)
-			return this.onNextDeck();
+			return this.leaveStories();
 
 		this.animateIndicator();
 		this.setStoryIdx(story.idx + 1);
@@ -237,6 +282,11 @@ class Store {
 		}).start();
 	}
 
+	@action getSrc(){
+		this.src = this.currentStory.items[this.currentStory.idx].src
+		return this.src;
+	}
+
 
 	///////////////////////////////////
 	// Computed properties
@@ -247,6 +297,9 @@ class Store {
 		return this.stories[this.deckIdx];
 	}
 
+	@computed get currentItemSrc() {
+		return this.src = this.currentStory.items[this.currentIdx()].src;
+	}
 }
 
 export default new Store();

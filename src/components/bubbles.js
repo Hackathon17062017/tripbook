@@ -2,7 +2,11 @@ import React from 'react';
 import { StyleSheet, ScrollView, View, Image, TouchableWithoutFeedback } from 'react-native';
 import store from '../configs/store';
 
-export default class extends React.Component {
+export default class Bubbles extends React.Component {
+	constructor(props){
+		super(props);
+	}
+
 	render() {
 		return (
 			<View style={styles.container}>
@@ -13,7 +17,7 @@ export default class extends React.Component {
 						horizontal={true}
 						showsHorizontalScrollIndicator={false}
 					>
-						{store.stories.map((story, i) => (
+						{this.props.stories.map((story, i) => (
 							<View ref={`_${i}`} key={i}>
 								<TouchableWithoutFeedback
 									activeOpacity={0.9}

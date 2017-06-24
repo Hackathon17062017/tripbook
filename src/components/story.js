@@ -5,6 +5,7 @@ import store from '../configs/store';
 import Indicator from './indicator';
 import Image from 'react-native-image-progress';
 import CircleSnail from 'react-native-progress/CircleSnail';
+import {firebaseApp, database, server} from '../configs/firebase';
 
 const circleSnailProps = { thickness: 1, color: '#ddd', size: 80 };
 const { width, height } = Dimensions.get('window');
@@ -12,26 +13,37 @@ const { width, height } = Dimensions.get('window');
 
 @observer
 export default class extends React.Component {
+	constructor(props) {
+		super(props);
+		let key = props.story.id;
+		//store.fetchMoments(database.ref('/moments/'+key));
+	}
+
 	render() {
 		const { story } = this.props;
-
-		return (
-			<TouchableWithoutFeedback
-				onPress={store.onNextItem}
-			>
-				<View style={{flex: 1}}>
-					<Image
-						source={{ uri: story.items[story.idx].src }}
-						style={styles.deck}
-						indicator={CircleSnail}
-						indicatorProps={circleSnailProps}
-					/>
-					{this.renderIndicators()}
-					{this.renderCloseButton()}
-					{this.renderBackButton()}
-				</View>
-			</TouchableWithoutFeedback>
-		);
+		if (store.isLoadingMoments) {
+			return (
+				<View></View>
+			)
+		} else {
+			return (
+				<TouchableWithoutFeedback
+					onPress={store.onNextItem}
+				>
+					<View style={{flex: 1}}>
+						<Image
+						  source={{ uri: story.items[story.idx].src }}
+							style={styles.deck}
+							indicator={CircleSnail}
+							indicatorProps={circleSnailProps}
+						/>
+						{this.renderIndicators()}
+						{this.renderCloseButton()}
+						{this.renderBackButton()}
+					</View>
+				</TouchableWithoutFeedback>
+			);
+		}
 	}
 
 	renderCloseButton() {
@@ -72,7 +84,9 @@ export default class extends React.Component {
 				onPressIn={() => store.setBackOpacity(1)}
 				onLongPress={() => store.setBackOpacity(0)}
 			>
-				<Text>LOL</Text>
+				<View>
+					<Text>LOL</Text>
+				</View>
 			</TouchableWithoutFeedback>
 		);
 	}
