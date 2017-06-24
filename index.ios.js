@@ -5,6 +5,6 @@ import {
   Text,
   View
 } from 'react-native';
-import TripBook from './components/index';
+import TripBook from './src/index';
 
 AppRegistry.registerComponent('TripBook', () => TripBook);
