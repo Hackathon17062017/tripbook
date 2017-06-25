@@ -37,9 +37,13 @@ export default class extends React.Component {
 							indicator={CircleSnail}
 							indicatorProps={circleSnailProps}
 						/>
-						{this.renderIndicators()}
-						{this.renderCloseButton()}
-						{this.renderBackButton()}
+						<TouchableWithoutFeedback onPress={store.dismissCarousel}>
+							<View style={styles.commentButton}>
+								<View style={[styles.closeCross, { transform: [{rotate: '45deg'}]}]} />
+								<View style={[styles.closeCross, { transform: [{rotate: '-45deg'}]}]} />
+							</View>
+						</TouchableWithoutFeedback>
+
 					</View>
 				</TouchableWithoutFeedback>
 			);
@@ -85,7 +89,7 @@ export default class extends React.Component {
 				onLongPress={() => store.setBackOpacity(0)}
 			>
 				<View>
-					<Text>LOL</Text>
+					<Text style={styles.back}>LOL</Text>
 				</View>
 			</TouchableWithoutFeedback>
 		);
@@ -104,6 +108,14 @@ const styles = StyleSheet.create({
 		backgroundColor: 'white',
 		justifyContent: 'center',
 		alignItems: 'center',
+	},
+	commentButton: {
+		position: 'absolute',
+		bottom: 0,
+		right: 0,
+		width: 70,
+		height: 70,
+		zIndex: 1,
 	},
 
 	indicatorWrap: {

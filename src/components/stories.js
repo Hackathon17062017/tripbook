@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Dimensions, Animated, StatusBar, Text } from 'react-native';
+import { StyleSheet, View, Dimensions, Animated, StatusBar, Text, Button } from 'react-native';
 import { observer } from 'mobx-react/native';
 import Story from './story';
 import store from '../configs/store';
@@ -63,6 +63,10 @@ export default class extends React.Component {
 								}]
 							}>
 								<Story story={story} idx={idx} currentDeck={store.deckIdx == idx} />
+								{/* <View>
+									<Button title="Comment" onPress={()=>{}}></Button>
+									<Button title="Connected" onPress={()=>{}}></Button>
+								</View> */}
 							</Animated.View>
 						);
 					})}
