@@ -37,17 +37,25 @@ export default class extends React.Component {
 							indicator={CircleSnail}
 							indicatorProps={circleSnailProps}
 						/>
-						<TouchableWithoutFeedback onPress={store.dismissCarousel}>
-							<View style={styles.commentButton}>
-								<View style={[styles.closeCross, { transform: [{rotate: '45deg'}]}]} />
-								<View style={[styles.closeCross, { transform: [{rotate: '-45deg'}]}]} />
-							</View>
-						</TouchableWithoutFeedback>
+						{this.renderIndicators()}
+						{this.renderCloseButton()}
+						{this.renderBackButton()}
 
 					</View>
 				</TouchableWithoutFeedback>
 			);
 		}
+	}
+
+	renderCommentButton() {
+		return (
+			<TouchableWithoutFeedback onPress={store.dismissCarousel}>
+				<View style={styles.commentButton}>
+					<View style={[styles.closeCross, { transform: [{rotate: '45deg'}]}]} />
+					<View style={[styles.closeCross, { transform: [{rotate: '-45deg'}]}]} />
+				</View>
+			</TouchableWithoutFeedback>
+		)
 	}
 
 	renderCloseButton() {
