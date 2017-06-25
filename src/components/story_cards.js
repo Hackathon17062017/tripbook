@@ -39,10 +39,8 @@ export default class StoryCards extends React.Component {
 													top: (py + bubbleSize/2),
 													left: (px + bubbleSize/2)
 												};
-												store.fetchMoments(database.ref('/moments/'+story.key))
-												if (store.isLoading == false) {
-													store.openCarousel(i, offset, story);
-												}
+												// store.fetchMoments(database.ref('/moments/'+story.key))
+												store.openCarousel(i, offset);
 											});
 										}}
 									>

@@ -21,8 +21,8 @@ export default class extends React.Component {
 
 	render() {
 		const { story } = this.props;
-		if (store.isLoadingMoments) {
-			return (
+		if (store.isLoadingStories){
+			return(
 				<View></View>
 			)
 		} else {
@@ -68,7 +68,7 @@ export default class extends React.Component {
 					{story.items.map((item, i) => (
 						<Indicator
 							key={i} i={i}
-							animate={currentDeck && story.idx == i}
+							animate={currentDeck && story.idx == i && !store.isLoadingMoments}
 							story={story}
 						/>
 					))}

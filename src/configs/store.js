@@ -54,13 +54,19 @@ class Store {
 			let newStories = [];
 			snaps.forEach(child => {
 				let story = child.val();
+				let moments = Object.values(story.moments);
+				let items = moments.map(moment => {
+					return {
+						src: moment.photo_url,
+						type: 'img',
+						timestamp: moment.timestamp,
+						place: moment.place
+					}
+				})
 				newStories.push({
 					idx: 0,
-					avatar: story.user.avatar_url,
-					items: [{
-						src: story.featured_moment.photo_url,
-						type: 'img'
-					}],
+					avatar: moments[0].photo_url,
+					items: items,
 					title: story.title,
 					user: story.user,
 					id: child.key
@@ -68,6 +74,21 @@ class Store {
 			});
 			this.stories = newStories;
 			this.isLoadingStories = false;
+			// newStories.forEach((story, i) => {
+			// 	momentsRef = database.ref('/moments/'+story.id);
+			// 	momentsRef.once('value', snaps => {
+			// 		let items = []
+			// 		snaps.forEach(snap => {
+			// 			let moment = snap.val();
+			// 			items.push({
+			// 				src: moment.photo_url,
+			// 				type: 'img',
+			// 				timestamp: moment.timestamp,
+			// 				place: moment.place
+			// 			})
+			// 		});
+			// 	})
+			// })
 		})
 	}
 
@@ -141,12 +162,11 @@ class Store {
 	// Toggle Carousel
 	///////////////////////////////////
 
-	@action openCarousel = (idx, offset, story) => {
-		// this.fetchMoments(database.ref('/moments/'+story.key))
+	@action openCarousel = (idx, offset) => {
+
 		this.offset = offset;
 		this.setDeckIdx(idx);
 		this.horizontalSwipe.setValue(idx * width);
-
 		requestAnimationFrame(() => {
 			LayoutAnimation.easeInEaseOut();
 			this.carouselOpen = true;
@@ -213,7 +233,7 @@ class Store {
 		requestAnimationFrame(() => {
 			Animated.timing(this.indicatorAnim, {
 				toValue: 1,
-				duration: 1000000 * (1-this.indicatorAnim._value),
+				duration: 100000000 * (1-this.indicatorAnim._value),
 			}).start(({ finished }) => {
 				if (finished) this.onNextItem();
 			});
@@ -234,7 +254,7 @@ class Store {
 		if (this.paused) return this.play();
 
 		const story = this.currentStory;
-		console.error(this.currentStory.items);
+		console.log("+++++++++++++++++++++++++++++++++++++++++++")
 
 		if (story.idx >= story.items.length - 1)
 			return this.leaveStories();
